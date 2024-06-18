@@ -1,17 +1,29 @@
-export const ContactForm = () => {
+import React from 'react';
+
+export const ContactForm = ({ name, number, onInputChange, onAddContact }) => {
   return (
-    <>
-      <form action="">
-        <label htmlFor="Name">
-          Name
-          <input type="tel" name="number" required />
-        </label>
-        <label htmlFor="number">
-          number
-          <input type="num" name="number" required />
-        </label>
-        <button type="submit">Add contact</button>
-      </form>
-    </>
+    <form onSubmit={onAddContact}>
+      <label>
+        Name
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={onInputChange}
+          required
+        />
+      </label>
+      <label>
+        Number
+        <input
+          type="tel"
+          name="number"
+          value={number}
+          onChange={onInputChange}
+          required
+        />
+      </label>
+      <button type="submit">Add contact</button>
+    </form>
   );
 };
