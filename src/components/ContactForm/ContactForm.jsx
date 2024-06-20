@@ -1,29 +1,55 @@
 import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 
-export const ContactForm = ({ name, number, onInputChange, onAddContact }) => {
+const SignupSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too Short!')
+    .max(20, 'Too Long!')
+    .required('Required'),
+  number: Yup.string()
+    .min(2, 'Too Short!')
+    .max(10, 'Too Long!')
+    .required('Required'),
+});
+
+export const ContactForm = ({ name, number, onAddContact }) => {
   return (
-    <form onSubmit={onAddContact}>
-      <label>
-        Name
-        <input
-          type="text"
-          name="name"
-          value={name}
-          onChange={onInputChange}
-          required
-        />
-      </label>
-      <label>
-        Number
-        <input
-          type="tel"
-          name="number"
-          value={number}
-          onChange={onInputChange}
-          required
-        />
-      </label>
-      <button type="submit">Add contact</button>
-    </form>
+    <Formik
+      initialValues={{ name, number }}
+      onSubmit={(values, action) => {
+        onAddContact(values);
+        action.resetForm();
+      }}
+      validationSchema={SignupSchema}
+    >
+      <Form>
+        <label htmlFor="name">
+          Name
+          <Field
+            id="name"
+            type="text"
+            name="name"
+            // value={name}
+            // onChange={onInputChange}
+            required
+          />
+          <ErrorMessage name="name" />
+        </label>
+        <label>
+          Number
+          <Field
+            id="number"
+            type="tel"
+            name="number"
+            // value={number}
+            // onChange={onInputChange}
+            required
+          />
+          <ErrorMessage name="number" />
+        </label>
+        <button type="submit">Add contact</button>
+      </Form>
+    </Formik>
   );
 };

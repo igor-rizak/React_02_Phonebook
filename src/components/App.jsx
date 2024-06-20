@@ -1,6 +1,7 @@
 import { Component } from 'react';
+import { Filter } from 'components/Filter/Filter';
 import { ContactForm } from './ContactForm/ContactForm';
-import { Contacts } from './Contacts';
+import { Contacts } from './Contacts/Contacts';
 import { nanoid } from 'nanoid';
 
 class App extends Component {
@@ -22,23 +23,43 @@ class App extends Component {
     this.setState({ [name]: value });
   };
 
-  handleAddContact = event => {
-    event.preventDefault();
-    const { name, number, contacts } = this.state;
+  handleAddContact = values => {
+    const { contacts } = this.state;
     const newContact = {
       id: nanoid(),
-      name,
-      number,
+      ...values,
     };
-    this.setState({
-      contacts: [...contacts, newContact],
-      name: '',
-      number: '',
-    });
+
+    // Check for duplicate NAME
+    if (contacts.some(contact => contact.name === newContact.name)) {
+      alert('This NAME already exists.');
+      return;
+    }
+    // Check for duplicate NUMBER
+    if (contacts.some(contact => contact.number === newContact.number)) {
+      alert('This NUMBER already exists.');
+      return;
+    }
+
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, newContact],
+    }));
+  };
+
+  handleFilterChange = event => {
+    this.setState({ filter: event.target.value });
+  };
+
+  getFilteredContacts = () => {
+    const { contacts, filter } = this.state;
+    return contacts.filter(contact =>
+      contact.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+    );
   };
 
   render() {
-    const { name, number, contacts } = this.state;
+    const { name, number } = this.state;
+    const filteredContacts = this.getFilteredContacts();
 
     return (
       <div>
@@ -49,7 +70,14 @@ class App extends Component {
           onInputChange={this.handleInputChange}
           onAddContact={this.handleAddContact}
         />
-        <Contacts contacts={contacts} onInputChange={this.handleInputChange} />
+        <Filter
+          value={this.state.filter}
+          handleFilterChange={this.handleFilterChange}
+        />
+        <Contacts
+          contacts={filteredContacts}
+          onInputChange={this.handleInputChange}
+        />
       </div>
     );
   }
