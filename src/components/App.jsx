@@ -57,6 +57,14 @@ class App extends Component {
     );
   };
 
+  removeContact = contactId => {
+    this.setState(prevState => {
+      return {
+        contacts: prevState.contacts.filter(({ id }) => id !== contactId),
+      };
+    });
+  };
+
   render() {
     const { name, number } = this.state;
     const filteredContacts = this.getFilteredContacts();
@@ -77,6 +85,7 @@ class App extends Component {
         <Contacts
           contacts={filteredContacts}
           onInputChange={this.handleInputChange}
+          onRemoveContact={this.removeContact}
         />
       </div>
     );
