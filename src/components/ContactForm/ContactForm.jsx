@@ -20,6 +20,7 @@ export const ContactForm = ({ name, number, onAddContact }) => {
       onSubmit={(values, action) => {
         onAddContact(values);
         action.resetForm();
+        console.log(false === false);
       }}
       validationSchema={SignupSchema}
     >
