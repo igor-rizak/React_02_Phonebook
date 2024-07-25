@@ -1,8 +1,10 @@
+import { FilterContainer, FilterLabel, FilterInput } from './Filter.styled.js';
+
 export const Filter = ({ handleFilterChange }) => {
   return (
-    <>
-      <span>Find contacts by name</span>
-      <input type="text" onChange={handleFilterChange} name="filter" />
-    </>
+    <FilterContainer>
+      <FilterLabel>Find contacts by name</FilterLabel>
+      <FilterInput type="text" onChange={handleFilterChange} name="filter" />
+    </FilterContainer>
   );
 };

@@ -1,23 +1,51 @@
 import styled from 'styled-components';
 
-export const ListStyle = styled.li`
-display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  margin: 5px 0;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s, box-shadow 0.3s;
-
-:hover {
-  background-color: orange;
-
-}
+export const Heading = styled.h2`
+  text-align: center;
+  color: #333;
 `;
 
-export const Heading = styled.h2`
-  margin-bottom: 20px;
+export const List = styled.ul`
+  list-style-type: none;
+  padding: 2rem;
+  margin: 0;
+  max-width: 400px;
+  margin:auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+`;
+
+export const ListItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #ccc;
+
+  &:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+`;
+
+export const ContactName = styled.span`
+  font-weight: 600;
   color: #333;
-  text-align: center;`
+`;
+
+export const ContactNumber = styled.span`
+  color: #666;
+`;
+
+export const DeleteButton = styled.button`
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 3px;
+  background-color: #ff4d4d;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ff0000;
+  }
+`;

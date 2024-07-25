@@ -1,100 +1,75 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
+import { nanoid } from 'nanoid';
+
+import { Headers } from './Headers/Headers';
 import { Filter } from 'components/Filter/Filter';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Contacts } from './Contacts/Contacts';
-import { nanoid } from 'nanoid';
 
-class App extends Component {
-  state = {
-    contacts: [],
-    id: '',
-    name: '',
-    number: '',
-    filter: '',
-  };
-  componentDidMount() {
-    const storedContacts = localStorage.getItem('contacts');
-    if (storedContacts) {
-      this.setState({ contacts: JSON.parse(storedContacts) });
-    }
-  }
+export const App = () => {
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = window.localStorage.getItem('contacts');
+    return JSON.parse(savedContacts);
+  });
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
+  const [filter, setFilter] = useState('');
 
-  handleInputChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
-  };
+  useEffect(() => {
+    window.localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-  handleAddContact = values => {
-    const { contacts } = this.state;
-    const newContact = {
-      id: nanoid(),
-      ...values,
-    };
+  const addContact = contact => {
+    const isInContacts = contacts.some(
+      ({ name, number }) =>
+        name.toLowerCase().trim() === contact.name.toLowerCase().trim() ||
+        number.trim() === contact.number.trim()
+    );
 
-    if (contacts.some(contact => contact.name === newContact.name)) {
-      alert('This NAME already exists.');
-      return;
-    }
-    if (contacts.some(contact => contact.number === newContact.number)) {
-      alert('This NUMBER already exists.');
+    if (isInContacts) {
+      if (
+        contacts.some(
+          ({ name }) =>
+            name.toLowerCase().trim() === contact.name.toLowerCase().trim()
+        )
+      ) {
+        alert(`Це ім'я - ${contact.name} вже є в контактах`);
+      } else if (
+        contacts.some(({ number }) => number.trim() === contact.number.trim())
+      ) {
+        alert(`Цей телефон - ${contact.number} вже є в контактах`);
+      }
       return;
     }
 
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-    }));
+    setContacts(prevContacts => [
+      ...prevContacts,
+      { id: nanoid(), ...contact },
+    ]);
   };
 
-  handleFilterChange = event => {
-    this.setState({ filter: event.target.value });
+  const handleFilterChange = event => {
+    setFilter(event.target.value);
   };
 
-  getFilteredContacts = () => {
-    const { contacts, filter } = this.state;
+  const getFilteredContacts = () => {
     return contacts.filter(contact =>
-      contact.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+      contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
 
-  removeContact = contactId => {
-    this.setState(prevState => {
-      return {
-        contacts: prevState.contacts.filter(({ id }) => id !== contactId),
-      };
-    });
+  const removeContact = contactId => {
+    setContacts(contacts.filter(({ id }) => id !== contactId));
   };
 
-  render() {
-    const { name, number } = this.state;
-    const filteredContacts = this.getFilteredContacts();
-
-    return (
-      <div>
-        <h1>PHONEBOOK</h1>
-        <ContactForm
-          name={name}
-          number={number}
-          onInputChange={this.handleInputChange}
-          onAddContact={this.handleAddContact}
-        />
-        <Filter
-          value={this.state.filter}
-          handleFilterChange={this.handleFilterChange}
-        />
-        <Contacts
-          contacts={filteredContacts}
-          onInputChange={this.handleInputChange}
-          onRemoveContact={this.removeContact}
-        />
-      </div>
-    );
-  }
-}
-
-export default App;
+  return (
+    <div>
+      <Headers />
+      <ContactForm onAddContact={addContact} />
+      <Contacts
+        contacts={getFilteredContacts()}
+        onRemoveContact={removeContact}
+      />
+      <Filter value={filter} handleFilterChange={handleFilterChange} />
+    </div>
+  );
+};
